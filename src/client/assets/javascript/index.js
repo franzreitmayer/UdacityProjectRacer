@@ -17,7 +17,7 @@ async function onPageLoad() {
 	try {
 		getTracks()
 			.then(tracks => {
-				const html = renderTrackCards(tracks)
+				const html = renderTrackCards(tracks)   
 				renderAt('#tracks', html)
 			})
 
@@ -78,11 +78,20 @@ async function handleCreateRace() {
 	renderAt('#race', renderRaceStartView())
 
 	// TODO - Get player_id and track_id from the store
+	const player_id = store.player_id;
+	const track_id = store.track_id;
 	
 	// const race = TODO - invoke the API call to create the race, then save the result
+	try {
+		const race = await createRace(player_id, track_id);
+	} catch (error) {
+		console.log("Error creating race");
+		console.log(error);
+	}
 
 	// TODO - update the store with the race id
 	// For the API to work properly, the race id should be race id - 1
+	store.race_id = race.id;
 	
 	// The race has been created, now start the countdown
 	// TODO - call the async function runCountdown
@@ -322,10 +331,26 @@ function defaultFetchOpts() {
 
 function getTracks() {
 	// GET request to `${SERVER}/api/tracks`
+	try {
+		const promise = fetch(`${SERVER}/api/tracks`, defaultFetchOpts());
+		return promise.then( result => result.json());
+	} catch(error) {
+		console.log("Error fetching tracks");
+		console.log(error);
+		throw error;
+	}
 }
 
-function getRacers() {
+async function getRacers() {
 	// GET request to `${SERVER}/api/cars`
+	try {
+		const promise = await fetch(`${SERVER}/api/cars`, defaultFetchOpts());
+		return promise.json();
+	} catch (error) {
+		console.log("Error fetching cars");
+		console.log(error);
+		throw error;
+	}
 }
 
 function createRace(player_id, track_id) {
@@ -360,4 +385,14 @@ function accelerate(id) {
 	// POST request to `${SERVER}/api/races/${id}/accelerate`
 	// options parameter provided as defaultFetchOpts
 	// no body or datatype needed for this request
+	try {
+		const promise = fetch(`${SERVER}/api/races/${id}/accelerate`, {
+			method: 'POST',
+			...defaultFetchOpts(),
+		});
+	} catch (error) {
+		console.log("error occured during acceleration");
+		console.log(error);
+		throw error;
+	}
 }
