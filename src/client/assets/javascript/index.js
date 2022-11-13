@@ -75,7 +75,7 @@ async function delay(ms) {
 // This async function controls the flow of the race, add the logic and error handling
 async function handleCreateRace() {
 	// render starting UI
-	renderAt('#race', renderRaceStartView())
+	renderAt('#race', renderRaceStartView(1, getRacers()))
 
 	// TODO - Get player_id and track_id from the store
 	const player_id = store.player_id;
@@ -183,8 +183,10 @@ function handleAccelerate() {
 
 function renderRacerCars(racers) {
 	if (!racers.length) {
+		const htmlRacerElements = racers.map(racer => `<li>${racer}</li>`);
+		const htmlRacers = htmlRacerElements.reduce((curr, prev) => `${curr} ${prev}`, '');
 		return `
-			<h4>Loading Racers...</4>
+			<ul>${htmlRacers}</ul>
 		`
 	}
 

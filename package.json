@@ -5,7 +5,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon src/server/index.js"
+    "start": "nodemon src/server/index.js",
+    "server": "cmd /k .\\bin\\server.exe"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
