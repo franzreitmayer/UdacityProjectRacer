@@ -84,7 +84,7 @@ async function handleCreateRace() {
 	// const race = TODO - invoke the API call to create the race, then save the result
 	try {
 		const newRace = await createRace(player_id, track_id);
-		store.race_id = newRace.id;
+		store.race_id = newRace.ID - 1;
 	} catch (error) {
 		console.log("Error creating race");
 		console.log(error);
@@ -106,7 +106,7 @@ async function handleCreateRace() {
 
 // #TODO
 function runRace(raceID) {
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 	// TODO - use Javascript's built in setInterval method to get race info every 500ms
 
 	/* 
@@ -125,9 +125,12 @@ function runRace(raceID) {
 	
 		const raceInterval = 500; // 500ms for interval
 		const intervalId = setInterval(() => {
-			 getRace(store.race_id.then(data => console.log(data)));
+			console.log("run race..."); 
+			getRace(store.race_id).then(
+				data => console.log(data)
+			).catch(error => console.log(error) );
 		}, raceInterval);
-	}).catch(error => console.log(`Error occured getting race infomation: ${error}`))
+	});
 	// remember to add error handling for the Promise
 }
 
@@ -145,7 +148,7 @@ async function runCountdown() {
 				document.getElementById('big-numbers').innerHTML = --timer
 				if (timer <= 0) {
 					clearInterval(intervalId)
-					Promise.resolve();
+					resolve();
 				};
 
 			}, 1000);
