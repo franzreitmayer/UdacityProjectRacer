@@ -126,9 +126,14 @@ function runRace(raceID) {
 		const raceInterval = 500; // 500ms for interval
 		const intervalId = setInterval(() => {
 			console.log("run race..."); 
-			getRace(store.race_id).then(
-				data => console.log(data)
-			).catch(error => console.log(error) );
+			getRace(store.race_id).then( data => {
+				console.log(data)
+				resolve();
+			}
+			).catch( error => { 
+				console.log(`An error occured on perfoming status update of race: ${error}`);
+				reject(); 
+			});
 		}, raceInterval);
 	});
 	// remember to add error handling for the Promise
