@@ -128,7 +128,13 @@ function runRace(raceID) {
 			console.log("run race..."); 
 			getRace(store.race_id).then( data => {
 				console.log(data)
-				resolve();
+				if (data.status == 'in-progress') {
+					renderAt('#leaderBoard', raceProgress(data.positions));
+				} else {
+ 					clearInterval(intervalId);
+					renderAt('#race', resultsView(data.positions));
+					resolve(data);
+				}
 			}
 			).catch( error => { 
 				console.log(`An error occured on perfoming status update of race: ${error}`);
@@ -178,7 +184,7 @@ function handleSelectPodRacer(target) {
 	target.classList.add('selected')
 
 	// TODO - save the selected racer to the store
-	const racerId = target.id;
+	const racerId = parseInt(target.id);
 	store.player_id = racerId;
 }
 
@@ -204,7 +210,6 @@ function handleAccelerate() {
 	console.log("accelerate button clicked")
 	// TODO - Invoke the API call to accelerate
 	const raceId = store.race_id;
-	debugger;
 	console.log(`accelerate race with id ${raceId}`);
 	accelerate(raceId);
 }
@@ -407,7 +412,11 @@ function getRace(id) {
 		method: 'GET',
 		...defaultFetchOpts(),
 	})
-	.then(res => res.json())
+	.then(res => { 
+		console.log(res);
+		return res.json()
+	
+	})
 	.catch(err => console.log("Problem with getRace request::", err))
 
 }
@@ -416,9 +425,7 @@ function startRace(id) {
 	return fetch(`${SERVER}/api/races/${id}/start`, {
 		method: 'POST',
 		...defaultFetchOpts(),
-	})
-	.then(res => res.json())
-	.catch(err => console.log("Problem with startRace request::", err))
+	}).catch(err => console.log("Problem with startRace request::", err))
 }
 
 function accelerate(id) {
